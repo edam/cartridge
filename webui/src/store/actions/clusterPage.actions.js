@@ -1,6 +1,6 @@
 import {
   CLUSTER_PAGE_DID_MOUNT,
-  CLUSTER_PAGE_SERVER_LIST_ROW_SELECT,
+  CLUSTER_PAGE_SERVER_LIST_ROW_SELECT_ON_JOIN,
   CLUSTER_PAGE_SERVER_POPUP_CLOSE,
   CLUSTER_PAGE_REPLICASET_LIST_ROW_SELECT,
   CLUSTER_PAGE_REPLICASET_POPUP_CLOSE,
@@ -13,6 +13,8 @@ import {
   CLUSTER_PAGE_UPLOAD_CONFIG_REQUEST,
   CLUSTER_PAGE_APPLY_TEST_CONFIG_REQUEST,
   CLUSTER_PAGE_FAILOVER_CHANGE_REQUEST,
+  CLUSTER_PAGE_SELECT_SERVER,
+  CLUSTER_PAGE_DISABLE_SERVERS_REQUEST,
   CLUSTER_PAGE_STATE_RESET,
   SET_BOOSTRAP_VSHARD_MODAL_VISIBLE,
   SET_FAILOVER_MODAL_VISIBLE,
@@ -26,7 +28,7 @@ import { getActionCreator, getPageMountActionCreator } from 'src/store/commonReq
  */
 export const pageDidMount = getPageMountActionCreator(CLUSTER_PAGE_DID_MOUNT);
 
-export const selectServer = getActionCreator(CLUSTER_PAGE_SERVER_LIST_ROW_SELECT);
+export const selectListRowOnJoin = getActionCreator(CLUSTER_PAGE_SERVER_LIST_ROW_SELECT_ON_JOIN);
 
 export const closeServerPopup = getActionCreator(CLUSTER_PAGE_SERVER_POPUP_CLOSE);
 
@@ -88,6 +90,19 @@ export const uploadConfig = getActionCreator(CLUSTER_PAGE_UPLOAD_CONFIG_REQUEST,
 export const applyTestConfig = getActionCreator(CLUSTER_PAGE_APPLY_TEST_CONFIG_REQUEST, null, {
   successMessage: 'Configuration applied successfully. Please wait for list refresh...',
 });
+
+/*
+ * @param {Object} params
+ * @param {string} params.uuid
+ * @param {bool} params.selected
+ */
+export const selectServer = getActionCreator(CLUSTER_PAGE_SELECT_SERVER);
+
+/*
+ * @param {Object} params
+ * @param {[string]} params.uuids
+ */
+export const disableServers = getActionCreator(CLUSTER_PAGE_DISABLE_SERVERS_REQUEST);
 
 /*
  * @param {Object} params

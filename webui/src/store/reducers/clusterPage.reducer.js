@@ -6,7 +6,7 @@ import {
   CLUSTER_PAGE_REFRESH_LISTS_REQUEST,
   CLUSTER_PAGE_REFRESH_LISTS_REQUEST_SUCCESS,
   CLUSTER_PAGE_REFRESH_LISTS_REQUEST_ERROR,
-  CLUSTER_PAGE_SERVER_LIST_ROW_SELECT,
+  CLUSTER_PAGE_SERVER_LIST_ROW_SELECT_ON_JOIN,
   CLUSTER_PAGE_SERVER_POPUP_CLOSE,
   CLUSTER_PAGE_REPLICASET_LIST_ROW_SELECT,
   CLUSTER_PAGE_REPLICASET_POPUP_CLOSE,
@@ -37,6 +37,10 @@ import {
   CLUSTER_PAGE_FAILOVER_CHANGE_REQUEST,
   CLUSTER_PAGE_FAILOVER_CHANGE_REQUEST_SUCCESS,
   CLUSTER_PAGE_FAILOVER_CHANGE_REQUEST_ERROR,
+  CLUSTER_PAGE_SELECT_SERVER,
+  CLUSTER_PAGE_DISABLE_SERVERS_REQUEST,
+  CLUSTER_PAGE_DISABLE_SERVERS_REQUEST_SUCCESS,
+  CLUSTER_PAGE_DISABLE_SERVERS_REQUEST_ERROR,
   CLUSTER_PAGE_STATE_RESET,
 } from 'src/store/actionTypes';
 import { baseReducer, getInitialRequestStatus, getPageMountReducer, getReducer, getRequestReducer }
@@ -67,6 +71,9 @@ export const initialState = {
   uploadConfigResponse: null,
   applyTestConfigRequestStatus: getInitialRequestStatus(),
   applyTestConfigResponse: null,
+  selectedServers: [],
+  disableServersRequestStatus: getInitialRequestStatus(),
+  disableServersResponse: null,
   changeFailoverRequestStatus: getInitialRequestStatus(),
   changeFailoverResponse: null,
 };
@@ -150,6 +157,13 @@ const changeFailoverRequestReducer = getRequestReducer(
   'changeFailoverRequestStatus',
 );
 
+const disableServersRequestReducer = getRequestReducer(
+  CLUSTER_PAGE_DISABLE_SERVERS_REQUEST,
+  CLUSTER_PAGE_DISABLE_SERVERS_REQUEST_SUCCESS,
+  CLUSTER_PAGE_DISABLE_SERVERS_REQUEST_ERROR,
+  'disableServersRequestStatus',
+);
+
 const pageStateResetReducer = getReducer(CLUSTER_PAGE_STATE_RESET, initialState);
 
 export const reducer = baseReducer(
@@ -166,6 +180,7 @@ export const reducer = baseReducer(
   uploadConfigRequestReducer,
   applyTestConfigRequestReducer,
   changeFailoverRequestReducer,
+  disableServersRequestReducer,
   pageStateResetReducer,
 )(
   (state, action) => {
@@ -177,7 +192,7 @@ export const reducer = baseReducer(
           selectedReplicasetUuid: action.payload.selectedReplicasetUuid || null,
         };
 
-      case CLUSTER_PAGE_SERVER_LIST_ROW_SELECT:
+      case CLUSTER_PAGE_SERVER_LIST_ROW_SELECT_ON_JOIN:
         return {
           ...state,
           selectedServerUri: action.payload.uri,
@@ -200,6 +215,23 @@ export const reducer = baseReducer(
           ...state,
           selectedReplicasetUuid: null,
         };
+
+      case CLUSTER_PAGE_SELECT_SERVER: {
+        const { payload: { checked, server } } = action;
+
+        if (checked) {
+          return {
+            ...state,
+            selectedServers: [...state.selectedServers, server.uuid ],
+          };
+        }
+        else {
+          return {
+            ...state,
+            selectedServers: [...state.selectedServers].filter(selectedServer => selectedServer !== server.uuid),
+          };
+        }
+      }
 
       default:
         return state;

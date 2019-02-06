@@ -34,8 +34,20 @@ const getReadableBytes = size => {
   return Math.max(bytes, 0.1).toFixed(1) + ' ' + byteUnits[i];
 };
 
-const prepareColumnProps = (linked, clusterSelf, consoleServer, joinServer, createReplicaset, expelServer) => {
+const prepareColumnProps = (linked, clusterSelf, consoleServer, joinServer, createReplicaset, expelServer, selectServer) => {
   const columns = [
+    {
+      key: 'selectCheckbox',
+      render: record => {
+        const handleCheck = event => selectServer(event, record);
+        return (
+          <input type="checkbox" defaultChecked={false} onChange={handleCheck}/>
+        );
+      },
+      width: '12px',
+      align: 'center',
+      hidden: ! linked,
+    },
     {
       key: 'name',
       title: 'Name',
@@ -160,6 +172,10 @@ const prepareColumnProps = (linked, clusterSelf, consoleServer, joinServer, crea
 const prepareDataSource = dataSource => [...dataSource];
 
 class ServerList extends React.PureComponent {
+  prepareColumnProps = defaultMemoize(prepareColumnProps);
+
+  prepareDataSource = defaultMemoize(prepareDataSource);
+
   render() {
     const { linked } = this.props;
     const skin = linked ? 'light' : 'enterprise';
@@ -182,7 +198,7 @@ class ServerList extends React.PureComponent {
 
   getColumnProps = () => {
     const { linked, clusterSelf, consoleServer, joinServer, createReplicaset, expelServer } = this.props;
-    return this.prepareColumnProps(linked, clusterSelf, consoleServer, joinServer, createReplicaset, expelServer);
+    return this.prepareColumnProps(linked, clusterSelf, consoleServer, joinServer, createReplicaset, expelServer, this.selectServer);
   };
 
   getDataSource = () => {
@@ -190,9 +206,10 @@ class ServerList extends React.PureComponent {
     return this.prepareDataSource(dataSource);
   };
 
-  prepareColumnProps = defaultMemoize(prepareColumnProps);
-
-  prepareDataSource = defaultMemoize(prepareDataSource);
+  selectServer = (event, server) => {
+    const { selectServer } = this.props;
+    selectServer({ server, checked: event.target.checked });
+  };
 }
 
 ServerList.propTypes = {

@@ -37,6 +37,9 @@ import {
   CLUSTER_PAGE_FAILOVER_CHANGE_REQUEST,
   CLUSTER_PAGE_FAILOVER_CHANGE_REQUEST_SUCCESS,
   CLUSTER_PAGE_FAILOVER_CHANGE_REQUEST_ERROR,
+  CLUSTER_PAGE_DISABLE_SERVERS_REQUEST,
+  CLUSTER_PAGE_DISABLE_SERVERS_REQUEST_SUCCESS,
+  CLUSTER_PAGE_DISABLE_SERVERS_REQUEST_ERROR,
   CLUSTER_PAGE_STATE_RESET,
   CLUSTER_SELF_UPDATE,
 } from 'src/store/actionTypes';
@@ -44,7 +47,7 @@ import { baseSaga, getRequestSaga, getSignalRequestSaga } from 'src/store/common
 import { getClusterSelf } from 'src/store/request/app.requests';
 import {
   getPageData, refreshLists, getServerStat, bootstrapVshard, probeServer, joinServer, createReplicaset,
-  expelServer, editReplicaset, joinSingleServer, uploadConfig, applyTestConfig, changeFailover
+  expelServer, editReplicaset, joinSingleServer, uploadConfig, applyTestConfig, changeFailover, disableServers
 } from 'src/store/request/clusterPage.requests';
 import { REFRESH_LIST_INTERVAL } from 'src/constants';
 
@@ -210,7 +213,12 @@ const changeFailoverRequestSaga = getRequestSaga(
   changeFailover,
 );
 
-
+const disableServersRequestSaga = getRequestSaga(
+  CLUSTER_PAGE_DISABLE_SERVERS_REQUEST,
+  CLUSTER_PAGE_DISABLE_SERVERS_REQUEST_SUCCESS,
+  CLUSTER_PAGE_DISABLE_SERVERS_REQUEST_ERROR,
+  disableServers,
+);
 
 const updateClusterSelfOnBootstrap = function* () {
   yield takeEvery(CLUSTER_PAGE_BOOTSTRAP_VSHARD_REQUEST_SUCCESS, function* () {
@@ -238,5 +246,6 @@ export const saga = baseSaga(
   uploadConfigRequestSaga,
   applyTestConfigRequestSaga,
   changeFailoverRequestSaga,
+  disableServersRequestSaga,
   updateClusterSelfOnBootstrap,
 );

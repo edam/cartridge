@@ -104,6 +104,7 @@ class Cluster extends React.Component {
       rolesFilterValue: '',
       nameFilterValue: '',
       filter: '',
+      disableServersConfirmVisible: false,
     };
 
     this.consoleReserveElement = null;
@@ -155,9 +156,9 @@ class Cluster extends React.Component {
 
   renderContent = () => {
     const { clusterSelf, selectedServerUri, replicasetList, selectedReplicasetUuid,
-      showBootstrapModal } = this.props;
+      showBootstrapModal, selectedServers } = this.props;
     const { serverConsoleVisible, probeServerModalVisible, createReplicasetModalVisible,
-      expelServerConfirmVisible } = this.state;
+      expelServerConfirmVisible, disableServersConfirmVisible } = this.state;
 
     const joinServerModalVisible = !!selectedServerUri;
     const editReplicasetModalVisible = !!selectedReplicasetUuid;
@@ -188,6 +189,10 @@ class Cluster extends React.Component {
         {serverConsoleVisible
           ? this.renderServerConsole()
           : null}
+        {disableServersConfirmVisible
+          ? this.renderDisableServersConfirmModal()
+          : null}
+
         <div className="pages-Cluster app-content">
           <div className="page-inner">
             {unlinkedServers.length
@@ -225,6 +230,15 @@ class Cluster extends React.Component {
                       {unlinkedServers.length
                         ? null
                         : this.renderServerButtons()}
+                        {selectedServers.length
+                          ? (
+                            <button className="btn btn-danger btn-sm"
+                              onClick={this.handleDisableServersRequest}
+                            >
+                              Disable selected servers
+                            </button>
+                          )
+                          : null}
                     </div>
                   </div>
 
@@ -401,6 +415,19 @@ class Cluster extends React.Component {
     );
   };
 
+  renderDisableServersConfirmModal = () => {
+    return (
+      <Modal
+        visible
+        width={540}
+        onOk={this.handleDisableServersSubmitRequest}
+        onCancel={this.handleDisableServersConfirmCloseRequest}
+      >
+        Do you really want to disable servers?
+      </Modal>
+    );
+  };
+
   setConsole = ref => {
     this.console = ref;
   };
@@ -420,8 +447,8 @@ class Cluster extends React.Component {
 
     if (locationSelectedServerUri !== selectedServerUri) {
       if (locationSelectedServerUri) {
-        const { selectServer } = this.props;
-        selectServer({ uri: locationSelectedServerUri });
+        const { selectListRowOnJoin } = this.props;
+        selectListRowOnJoin({ uri: locationSelectedServerUri });
       } else {
         const { closeServerPopup } = this.props;
         closeServerPopup();
@@ -644,7 +671,20 @@ class Cluster extends React.Component {
     this.setState(() => ({
       filter: value
     }))
-  }
+  };
+
+  handleDisableServersRequest = () => {
+    this.setState({ disableServersConfirmVisible: true });
+  };
+
+  handleDisableServersConfirmCloseRequest = () => {
+    this.setState({ disableServersConfirmVisible: false });
+  };
+
+  handleDisableServersSubmitRequest = () => {
+    const { disableServers, selectedServers } = this.props;
+    this.setState({ disableServersConfirmVisible: false }, () => disableServers({ uuids: selectedServers }));
+  };
 
   saveConnectedServerConsoleState = () => {
     const { saveConsoleState } = this.props;

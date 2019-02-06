@@ -265,6 +265,24 @@ export function applyTestConfig() {
   return graphql.fetch(graph);
 }
 
+/*
+ * @param {Object} params
+ * @param {[string]} params.uuids
+ */
+export function disableServers(params) {
+  const graph = `
+    mutation (
+      $uuids: [String]!
+    ) {
+      cluster {
+        disableServersResponse: disable_servers(
+          uuids: $uuids
+        )
+      }
+    }`;
+  return graphql.fetch(graph, params);
+}
+
 /**
  * @param {Object} params
  * @param {boolean} params.enabled

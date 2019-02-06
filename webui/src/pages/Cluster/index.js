@@ -2,9 +2,9 @@ import { connect } from 'react-redux';
 
 import { evalString, saveConsoleState } from 'src/store/actions/app.actions';
 import { createMessage } from 'src/store/actions/app.actions';
-import { pageDidMount, selectServer, closeServerPopup, selectReplicaset, closeReplicasetPopup, bootstrapVshard,
+import { pageDidMount, selectListRowOnJoin, closeServerPopup, selectReplicaset, closeReplicasetPopup, bootstrapVshard,
   probeServer, joinServer, createReplicaset, expelServer, editReplicaset, uploadConfig, applyTestConfig,
-  changeFailover, resetPageState, setVisibleBootstrapVshardModal } from 'src/store/actions/clusterPage.actions';
+  changeFailover, resetPageState, setVisibleBootstrapVshardModal, disableServers } from 'src/store/actions/clusterPage.actions';
 import Cluster from './Cluster';
 
 const mapStateToProps = state => {
@@ -24,6 +24,7 @@ const mapStateToProps = state => {
       replicasetList,
       serverStat,
       canTestConfigBeApplied,
+      selectedServers,
     },
     ui: {
       showBootstrapModal,
@@ -44,6 +45,7 @@ const mapStateToProps = state => {
     serverStat,
     canTestConfigBeApplied,
     showBootstrapModal,
+    selectedServers,
   };
 };
 
@@ -51,7 +53,7 @@ const mapDispatchToProps = {
   evalString,
   saveConsoleState,
   pageDidMount,
-  selectServer,
+  selectListRowOnJoin,
   closeServerPopup,
   selectReplicaset,
   closeReplicasetPopup,
@@ -66,7 +68,8 @@ const mapDispatchToProps = {
   createMessage,
   changeFailover,
   resetPageState,
-  setVisibleBootstrapVshardModal
+  setVisibleBootstrapVshardModal,
+  disableServers,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Cluster);
