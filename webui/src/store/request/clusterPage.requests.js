@@ -272,7 +272,7 @@ export function applyTestConfig() {
 export function disableServers(params) {
   const graph = `
     mutation (
-      $uuids: [String]!
+      $uuids: [String!]
     ) {
       cluster {
         disableServersResponse: disable_servers(
