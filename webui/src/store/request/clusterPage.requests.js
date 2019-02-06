@@ -41,6 +41,7 @@ export function getPageData() {
           uri
           status
           message
+          disabled
           replicaset {
             uuid
           }
@@ -92,6 +93,7 @@ export function refreshLists(params = {}) {
           uri
           status
           message
+          disabled
           replicaset {
             uuid
           }

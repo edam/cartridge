@@ -233,6 +233,12 @@ export const reducer = baseReducer(
         }
       }
 
+      case CLUSTER_PAGE_DISABLE_SERVERS_REQUEST_SUCCESS:
+        return {
+          ...state,
+          selectedServers: [],
+        };
+
       default:
         return state;
     }

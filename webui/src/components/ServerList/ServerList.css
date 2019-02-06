@@ -24,6 +24,11 @@
 color:  #343434;
 }
 
+.ServerList-alias--disabled {
+  font-weight: normal;
+  color: #bf611a;
+}
+
 .ServerList-uri {
     color: #838383;
 }

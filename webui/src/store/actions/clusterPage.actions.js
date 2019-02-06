@@ -102,7 +102,9 @@ export const selectServer = getActionCreator(CLUSTER_PAGE_SELECT_SERVER);
  * @param {Object} params
  * @param {[string]} params.uuids
  */
-export const disableServers = getActionCreator(CLUSTER_PAGE_DISABLE_SERVERS_REQUEST);
+export const disableServers = getActionCreator(CLUSTER_PAGE_DISABLE_SERVERS_REQUEST, null, {
+  successMessage: 'Servers disabled successfully. Please wait for list refresh...',
+});
 
 /*
  * @param {Object} params
