@@ -40,16 +40,6 @@ function g:setup()
 
     for _, server in pairs(self.servers) do
         helpers.retrying({}, function() server:graphql({query = '{}'}) end)
-        server:graphql({
-            query = [[
-                mutation($uri: String!) {
-                    probe_server(uri: $uri)
-                }
-            ]],
-            variables = {
-                uri = self.servers['a1'].advertise_uri,
-            }
-        })
     end
 end
 

@@ -724,6 +724,8 @@ local function _clusterwide(conf)
         end
     end
 
+    topology.probe_missing_members(conf_new.topology.servers)
+
     local ok, err = topology.validate(conf_new.topology, conf_old.topology)
     if not ok then
         return nil, err
