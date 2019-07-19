@@ -598,11 +598,32 @@ local function __edit_replicaset(topology_cfg, params)
     return true
 end
 
+--- Edit cluster topology.
+-- This function can be used for:
+--
+-- - bootstrapping cluster from scratch
+-- - joining a server to an existing replicaset
+-- - creating new replicaset with one or more servers
+-- - editing uri/labels of servers
+-- - disabling and expelling servers
+--
+-- @function patch_topology
+-- @tparam table args
+-- @tparam ?{EditServerParams,..} args.edit_servers
+-- @tparam ?{EditReplicasetParams,..} args.replicasets
+-- @tparam ?boolean args.async
+--   don't wait for joined servers to become ready
+--   (default: **false**)
+-- @tparam ?number args.timeout
+--   timeout for joined servers to become ready
+--   (default: **inf**)
+
 local function patch_topology(args)
     checks({
         edit_servers = '?table',
         replicasets = '?table',
         async = '?boolean',
+        timeout = '?number',
     })
 
     local args = table.deepcopy(args)

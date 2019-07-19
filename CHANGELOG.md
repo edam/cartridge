@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- New API `patch_topology` suitable for editing multiple servers/replicasets
+  at once. It can be used for bootstrapping cluster from scratch,
+  joining a server to an existing replicaset, creating new replicaset with
+  one or more servers, editing uri/labels of servers,
+  disabling or expelling servers.
+
 ### Fixed
 
 - `cluster.call_rpc` used to return 'Role unavailable' error as a first argument
