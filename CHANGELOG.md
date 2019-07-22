@@ -14,6 +14,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   one or more servers, editing uri/labels of servers,
   disabling or expelling servers.
 
+### Changed
+
+- Operation `join_server` is synchronous by default now, timeout is infinite.
+  This can be managed with call arguments:
+  `join_server({..., async = true/false, timeout = T})`.
+
 ### Fixed
 
 - `cluster.call_rpc` used to return 'Role unavailable' error as a first argument

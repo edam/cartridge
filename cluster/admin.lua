@@ -721,13 +721,65 @@ local function patch_topology(args)
         return nil, err
     end
 
+    repeat -- until true
+        if args.async ~= nil and args.async then
+            -- asynchronous call
+            -- don't wait anyone
+            break
+        end
+
+        local deadline
+        if args.timeout == nil then
+            deadline = math.huge
+        elseif args.timeout < 0 then
+            return nil, errors.new('TimeoutError', 'Invalid timeout value %s', args.timeout)
+        else
+            deadline = fiber.time() + args.timeout
+        end
+
+        local srv_awaiting = {}
+        for _, rpl in pairs(args.replicasets or {}) do
+            for _, srv in pairs(rpl.join_servers or {}) do
+                table.insert(srv_awaiting, srv)
+            end
+        end
+
+        local cond = membership.subscribe()
+        while #srv_awaiting > 0 and fiber.time() < deadline do
+            cond:wait(0.2)
+
+            for i = #srv_awaiting, 1, -1 do
+                local srv = srv_awaiting[i]
+                local member = membership.get_member(srv.uri)
+
+                if (member ~= nil)
+                and (member.status == 'alive')
+                and (member.payload.uuid == srv.uuid)
+                and (member.payload.error == nil)
+                and (member.payload.ready)
+                and (pool.connect(srv.uri) ~= nil)
+                then
+                    table.remove(srv_awaiting, i)
+                end
+            end
+        end
+        membership.unsubscribe(cond)
+
+        if #srv_awaiting > 0 then
+            return nil, errors.new('TimeoutError',
+                'Server %q not ready yet', srv_awaiting[1].uri
+            )
+        end
+
+        -- all servers ready
+    until true
+
+    local topology = get_topology()
     local ret = {
         servers_edited = {},
         servers_joined = {},
         replicasets = {}
     }
-
-    local topology = get_topology()
 
     for _, srv in pairs(args.edit_servers or {}) do
         table.insert(ret.servers_edited, topology.servers[srv.uuid])
@@ -739,6 +791,8 @@ local function patch_topology(args)
         end
         table.insert(ret.replicasets, topology.replicasets[rpl.uuid])
     end
+
+
 
     return ret
 end
@@ -763,9 +817,11 @@ local function join_server(args)
         instance_uuid = '?string',
         replicaset_uuid = '?string',
         roles = '?table',
-        timeout = '?number',
         labels = '?table',
         vshard_group = '?string',
+
+        async = '?boolean',
+        timeout = '?number',
     })
 
     local topology_cfg = confapplier.get_readonly('topology')
@@ -797,9 +853,9 @@ local function join_server(args)
         args.vshard_group = nil
     end
 
-
     local topology, err = patch_topology({
-        -- async = false,
+        async = args.async,
+        timeout = args.timeout,
         replicasets = {{
             uuid = args.replicaset_uuid,
             roles = args.roles,
@@ -816,34 +872,7 @@ local function join_server(args)
         return nil, err
     end
 
-    local timeout = args.timeout or 0
-    if not (timeout > 0) then
-        return true
-    end
-
-    local deadline = fiber.time() + timeout
-    local cond = membership.subscribe()
-    local conn = nil
-    while not conn and fiber.time() < deadline do
-        cond:wait(0.2)
-
-        local member = membership.get_member(args.uri)
-        if (member ~= nil)
-        and (member.status == 'alive')
-        and (member.payload.uuid == args.instance_uuid)
-        and (member.payload.error == nil)
-        and (member.payload.ready)
-        then
-            conn = pool.connect(args.uri)
-        end
-    end
-    membership.unsubscribe(cond)
-
-    if conn then
-        return true
-    else
-        return nil, e_topology_edit:new('Timeout connecting %q', args.uri)
-    end
+    return true
 end
 
 --- Edit an instance.
