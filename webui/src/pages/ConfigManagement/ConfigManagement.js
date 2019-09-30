@@ -9,6 +9,7 @@ import Button from '../../components/Button'
 import { IconDownload } from '../../components/Icon/icons/IconDownload';
 import UploadZone from '../../components/UploadZone';
 import { uploadConfig } from '../../store/actions/clusterPage.actions';
+import ConfigEditor from '../../components/ConfigEditor';
 
 const { AppTitle } = window.tarantool_enterprise_core.components;
 
@@ -105,6 +106,13 @@ class ConfigManagement extends React.Component {
               onClick={this.handleUpload}
             />
           </React.Fragment>
+        }
+      />
+
+      <TitledPanel
+        title={<Text variant={'h3'}>Config editor</Text>}
+        content={
+          <ConfigEditor />
         }
       />
     </div>
