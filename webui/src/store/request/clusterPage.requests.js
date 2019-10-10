@@ -27,11 +27,11 @@ export function getPageData() {
     .then(filterServerStat);
 }
 
-/**
- * @param {Object} [params]
- * @param {string} [params.shouldRequestStat]
- */
-export function refreshLists(params = {}) {
+type RefreshListsArgs = {
+  shouldRequestStat?: boolean
+};
+
+export function refreshLists(params: RefreshListsArgs = {}) {
   const graph = params.shouldRequestStat ? listQuery : listQueryWithoutStat;
   return graphql.fetch(graph)
     .then(params.shouldRequestStat ? filterServerStat : null);
@@ -46,11 +46,11 @@ export function bootstrapVshard() {
   return graphql.mutate(bootstrapMutation);
 }
 
-/**
- * @param {Object} params
- * @param {string} params.uri
- */
-export function probeServer(params) {
+type ProbeServerArgs = {
+  uri: string
+};
+
+export function probeServer(params: ProbeServerArgs) {
   return graphql.mutate(probeMutation, params);
 }
 
@@ -69,9 +69,9 @@ export function joinServer({ uri, uuid }: JoinServerArgs) {
   return graphql.mutate(editTopologyMutation, mutationVariables);
 }
 
-type CreateReplicasetArgs = {
+export type CreateReplicasetArgs = {
   alias: string,
-  roles: [string],
+  roles: string[],
   uri: string,
   vshard_group: string,
   weight: number
@@ -115,10 +115,10 @@ export function expelServer({ uuid }: ExpelServerArgs) {
   return graphql.mutate(editTopologyMutation, mutationVariables);
 }
 
-type EditReplicasetArgs = {
+export type EditReplicasetArgs = {
   alias: string,
-  master: [string],
-  roles: [string],
+  master: string[],
+  roles: string[],
   uuid: string,
   vshard_group: string,
   weight: number

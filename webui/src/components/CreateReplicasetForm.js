@@ -19,9 +19,9 @@ import type {
   Server,
   Role,
   Replicaset,
-  VshardGroup,
-  CreateReplicasetMutationVariables
+  VshardGroup
 } from 'src/generated/graphql-typing';
+import type { CreateReplicasetArgs } from 'src/store/request/clusterPage.requests';
 import {
   getDependenciesString,
   getRolesDependencies,
@@ -85,7 +85,7 @@ const info = <span>Group disabled not yet included the role of "<b>vshard-storag
 type CreateReplicasetFormProps = {
   knownRoles?: Role[],
   onCancel: () => void,
-  onSubmit: (d: CreateReplicasetMutationVariables) => void,
+  onSubmit: (d: CreateReplicasetArgs) => void,
   replicasetList?: Replicaset[],
   selectedServers?: Server[],
   vshard_groups?: VshardGroup[]

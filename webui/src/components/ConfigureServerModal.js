@@ -11,9 +11,9 @@ import type {
   Server,
   Role,
   Replicaset,
-  VshardGroup,
-  CreateReplicasetMutationVariables
+  VshardGroup
 } from 'src/generated/graphql-typing';
+import type { CreateReplicasetArgs } from 'src/store/request/clusterPage.requests';
 import {
   createReplicaset,
   joinServer,
@@ -115,7 +115,7 @@ class ConfigureServerModal extends React.Component<ConfigureServerModalProps> {
     );
   }
 
-  handleCreateReplicasetSubmit = (formData: CreateReplicasetMutationVariables) => {
+  handleCreateReplicasetSubmit = (formData: CreateReplicasetArgs) => {
     this.props.createReplicaset(formData);
     this.handleClose();
   };

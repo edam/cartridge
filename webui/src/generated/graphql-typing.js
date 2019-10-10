@@ -40,12 +40,12 @@ export type ApiclusterUsersArgs = {
 
 /** Parameters for editing a replicaset */
 export type EditReplicasetInput = {
-  uuid: $ElementType<Scalars, "String">,
+  uuid?: ?$ElementType<Scalars, "String">,
   weight?: ?$ElementType<Scalars, "Float">,
   vshard_group?: ?$ElementType<Scalars, "String">,
   join_servers?: ?Array<?JoinServerInput>,
   roles?: ?Array<$ElementType<Scalars, "String">>,
-  alias: $ElementType<Scalars, "String">,
+  alias?: ?$ElementType<Scalars, "String">,
   all_rw?: ?$ElementType<Scalars, "Boolean">,
   failover_priority?: ?Array<$ElementType<Scalars, "String">>
 };
